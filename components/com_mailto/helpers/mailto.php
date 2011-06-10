@@ -1,47 +1,58 @@
 <?php
 /**
- * @version		$Id: mailto.php 21389 2011-05-26 17:28:26Z dextercowley $
- * @package		Joomla.Site
- * @subpackage	com_mailto
- * @copyright	Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     $Id: mailto.php 21389 2011-05-26 17:28:26Z dextercowley $
+ * @package     Joomla.Site
+ * @subpackage  com_mailto
+ * @copyright   Copyright (C) 2005 - 2011 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
 
 /**
- * @package		Joomla.Site
- * @subpackage	com_mailto
+ * @package     Joomla.Site
+ * @subpackage  com_mailto
+ * @since       1.5
  */
 abstract class MailtoHelper
 {
 	/**
 	 * Adds a URL to the mailto system and returns the hash
 	 *
-	 * @param string url
-	 * @return URL hash
+	 * @param   string  $url  The url.
+	 *
+	 * @return  string  URL hash
+	 *
+	 * @since   1.5
 	 */
 	public static function addLink($url)
 	{
 		$hash = sha1($url);
+
 		self::cleanHashes();
+
 		$session = JFactory::getSession();
 		$mailto_links = $session->get('com_mailto.links', Array());
-		if(!isset($mailto_links[$hash]))
-		{
+
+		if (!isset($mailto_links[$hash])) {
 			$mailto_links[$hash] = new stdClass();
 		}
+
 		$mailto_links[$hash]->link = $url;
 		$mailto_links[$hash]->expiry = time();
 		$session->set('com_mailto.links', $mailto_links);
+
 		return $hash;
 	}
 
 	/**
 	 * Checks if a URL is a Flash file
 	 *
-	 * @param string
-	 * @return URL
+	 * @param   string  $hash
+	 *
+	 * @return  string  URL
+	 *
+	 * @since   1.5
 	 */
 	public static function validateHash($hash)
 	{
@@ -49,39 +60,40 @@ abstract class MailtoHelper
 		$session = JFactory::getSession();
 		self::cleanHashes();
 		$mailto_links = $session->get('com_mailto.links', Array());
-		if(isset($mailto_links[$hash]))
-		{
+
+		if (isset($mailto_links[$hash])) {
 			$retval = $mailto_links[$hash]->link;
 		}
+
 		return $retval;
 	}
 
 	/**
 	 * Cleans out old hashes
 	 *
-	 * @since 1.6.1
+	 * @return  void
+	 *
+	 * @since   1.6.1
 	 */
 	public static function cleanHashes($lifetime = 1440)
 	{
 		// flag for if we've cleaned on this cycle
 		static $cleaned = false;
-		if(!$cleaned)
-		{
+
+		if (!$cleaned) {
 			$past = time() - $lifetime;
 			$session = JFactory::getSession();
 			$mailto_links = $session->get('com_mailto.links', Array());
+
 			foreach($mailto_links as $index=>$link)
 			{
-				if($link->expiry < $past)
-				{
+				if($link->expiry < $past) {
 					unset($mailto_links[$index]);
 				}
 			}
+
 			$session->set('com_mailto.links', $mailto_links);
 			$cleaned = true;
 		}
-
-
 	}
 }
-
