@@ -42,6 +42,27 @@ class MailtoHelper
 	}
 
 	/**
+	 * Get a list of date ranges for filtering.
+	 *
+	 * @return  array
+	 *
+	 * @since   8.0
+	 */
+	public static function getDateRangeOptions()
+	{
+		$options = array(
+			JHtml::_('select.option', 'today', JText::_('COM_MAILTO_OPTION_RANGE_TODAY')),
+			JHtml::_('select.option', 'past_week', JText::_('COM_MAILTO_OPTION_RANGE_PAST_WEEK')),
+			JHtml::_('select.option', 'past_1month', JText::_('COM_MAILTO_OPTION_RANGE_PAST_1MONTH')),
+			JHtml::_('select.option', 'past_3month', JText::_('COM_MAILTO_OPTION_RANGE_PAST_3MONTH')),
+			JHtml::_('select.option', 'past_6month', JText::_('COM_MAILTO_OPTION_RANGE_PAST_6MONTH')),
+			JHtml::_('select.option', 'past_year', JText::_('COM_MAILTO_OPTION_RANGE_PAST_YEAR')),
+			JHtml::_('select.option', 'post_year', JText::_('COM_MAILTO_OPTION_RANGE_POST_YEAR')),
+		);
+		return $options;
+	}
+
+	/**
 	 * Configure the Linkbar.
 	 *
 	 * @param   string  $vName  The name of the active view.
