@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
 	<fieldset
+		name="basic"
+		label="COM_MAILTO_FIELDSET_BASIC_LABEL"
+		description=""
+		>
+
+		<field
+			name="stylesheets"
+			type="textarea"
+			label="COM_MAILTO_FIELD_STYLESHEETS_LABEL"
+			description="COM_MAILTO_FIELD_STYLESHEETS_DESC" 
+			cols="60"
+			rows="6" />
+	</fieldset>
+	
+	<fieldset
 		name="permissions"
 		label="JCONFIG_PERMISSIONS_LABEL"
 		description="JCONFIG_PERMISSIONS_DESC"
