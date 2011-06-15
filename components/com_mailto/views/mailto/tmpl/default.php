@@ -9,22 +9,32 @@
 
 // no direct access
 defined('_JEXEC') or die;
+
 JHtml::_('behavior.keepalive');
+
+// Prepare Javascript translation strings.
+JText::script('COM_MAILTO_EMAIL_ERR_NOINFO');
+
 ?>
 <script type="text/javascript">
 	Joomla.submitbutton = function(pressbutton) {
 		var form = document.getElementById('mailtoForm');
 
-		// do field validation
-		if (form.mailto.value == "" || form.from.value == "") {
-			alert('<?php echo JText::_('COM_MAILTO_EMAIL_ERR_NOINFO'); ?>');
+		// Do field validation.
+		if (form.email_group_id) {
+			if ((form.email_group_id.value > 0 && form.mailto.value == '') || form.from.value == '') {
+				alert(Joomla.JText._('COM_MAILTO_EMAIL_ERR_NOINFO'));
+				return false;
+			}
+		}
+		else if (form.mailto.value == '' || form.from.value == '') {
+			alert(Joomla.JText._('COM_MAILTO_EMAIL_ERR_NOINFO'));
 			return false;
 		}
 		form.submit();
 	}
 </script>
 <?php
-$data	= $this->get('data');
 ?>
 
 <div id="mailto-window">
@@ -36,25 +46,35 @@ $data	= $this->get('data');
 		 <span><?php echo JText::_('COM_MAILTO_CLOSE_WINDOW'); ?> </span></a>
 	</div>
 
-	<form action="<?php echo JURI::base() ?>index.php" id="mailtoForm" method="post">
+	<form action="<?php echo JRoute::_('index.php?option=com_mailto&task=send&tmpl=component'); ?>" id="mailtoForm" method="post">
+		<?php if (!empty($this->emailGroups)) : ?>
+		<div class="formelm">
+			<label for="emailGroup_field"><?php echo JText::_('COM_MAILTO_EMAIL_GROUP'); ?></label>
+			<select name="email_group_id" id="emailGroup_field">
+				<option value="0"><?php echo JText::_('COM_MAILTO_SELECT_EMAIL_GROUP'); ?></option>
+				<?php echo JHtml::_('select.options', $this->emailGroups); ?>
+			</select>
+		</div>
+		<?php endif; ?>
+
 		<div class="formelm">
 			<label for="mailto_field"><?php echo JText::_('COM_MAILTO_EMAIL_TO'); ?></label>
-			<input type="text" id="mailto_field" name="mailto" class="inputbox" size="25" value="<?php echo $data->mailto ?>"/>
+			<input type="text" id="mailto_field" name="mailto" class="inputbox" size="25" value="<?php echo $this->data->mailto ?>"/>
 		</div>
 		<div class="formelm">
 			<label for="sender_field">
 			<?php echo JText::_('COM_MAILTO_SENDER'); ?></label>
-			<input type="text" id="sender_field" name="sender" class="inputbox" value="<?php echo $data->sender ?>" size="25" />
+			<input type="text" id="sender_field" name="sender" class="inputbox" value="<?php echo $this->data->sender ?>" size="25" />
 		</div>
 		<div class="formelm">
 			<label for="from_field">
 			<?php echo JText::_('COM_MAILTO_YOUR_EMAIL'); ?></label>
-			<input type="text" id="from_field" name="from" class="inputbox" value="<?php echo $data->from ?>" size="25" />
+			<input type="text" id="from_field" name="from" class="inputbox" value="<?php echo $this->data->from ?>" size="25" />
 		</div>
 		<div class="formelm">
 			<label for="subject_field">
 			<?php echo JText::_('COM_MAILTO_SUBJECT'); ?></label>
-			<input type="text" id="subject_field" name="subject" class="inputbox" value="<?php echo $data->subject ?>" size="25" />
+			<input type="text" id="subject_field" name="subject" class="inputbox" value="<?php echo $this->data->subject ?>" size="25" />
 		</div>
 		<p>
 			<button class="button" onclick="return Joomla.submitbutton('send');">
@@ -64,12 +84,9 @@ $data	= $this->get('data');
 				<?php echo JText::_('COM_MAILTO_CANCEL'); ?>
 			</button>
 		</p>
-		<input type="hidden" name="layout" value="<?php echo $this->getLayout();?>" />
-		<input type="hidden" name="option" value="com_mailto" />
-		<input type="hidden" name="task" value="send" />
-		<input type="hidden" name="tmpl" value="component" />
-		<input type="hidden" name="link" value="<?php echo $data->link; ?>" />
-		<?php echo JHtml::_('form.token'); ?>
 
+		<input type="hidden" name="layout" value="<?php echo $this->getLayout();?>" />
+		<input type="hidden" name="link" value="<?php echo $this->data->link; ?>" />
+		<?php echo JHtml::_('form.token'); ?>
 	</form>
 </div>
