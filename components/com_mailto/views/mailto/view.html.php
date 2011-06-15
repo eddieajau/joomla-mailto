@@ -20,63 +20,33 @@ jimport('joomla.application.component.view');
 class MailtoViewMailto extends JView
 {
 	/**
+	 * @var    object
+	 * @since  8.0
+	 */
+	protected $data;
+
+	/**
+	 * @var    array
+	 * @since  8.0
+	 */
+	protected $emailGroups;
+
+	/**
 	 * Display the view.
+	 *
+	 * @param   string  $tpl  The name of the template file to parse.
 	 *
 	 * @return  void
 	 *
 	 * @since   1.5
+	 * @throws  Exception if an error is encountered in the models.
 	 */
 	function display($tpl = null)
 	{
-		$data = $this->getData();
-
-		if ($data === false) {
-			return false;
-		}
-
-		$this->set('data'  , $data);
+		// Initialise view data.
+		$this->data			= $this->get('Data');
+		$this->emailGroups	= $this->get('emailGroups');
 
 		parent::display($tpl);
-	}
-
-	/**
-	 * Get the data for the link.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.5
-	 */
-	function &getData()
-	{
-		$user = JFactory::getUser();
-		$data = new stdClass();
-
-		$data->link = urldecode(JRequest::getVar('link', '', 'method', 'base64'));
-
-		if ($data->link == '') {
-			JError::raiseError(403, JText::_('COM_MAILTO_LINK_IS_MISSING'));
-			$false = false;
-			return $false;
-		}
-
-		// Load with previous data, if it exists
-		$mailto		= JRequest::getString('mailto', '', 'post');
-		$sender		= JRequest::getString('sender', '', 'post');
-		$from		= JRequest::getString('from', '', 'post');
-		$subject	= JRequest::getString('subject', '', 'post');
-
-		if ($user->get('id') > 0) {
-			$data->sender	= $user->get('name');
-			$data->from		= $user->get('email');
-		}
-		else {
-			$data->sender	= $sender;
-			$data->from		= $from;
-		}
-
-		$data->subject	= $subject;
-		$data->mailto	= $mailto;
-
-		return $data;
 	}
 }
