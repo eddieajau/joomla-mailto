@@ -16,6 +16,16 @@ jimport('joomla.application.component.helper');
 require_once JPATH_COMPONENT.'/helpers/mailto.php';
 require_once JPATH_COMPONENT.'/controller.php';
 
-$controller = JController::getInstance('Mailto');
-$controller->registerDefaultTask('mailto');
-$controller->execute(JRequest::getCmd('task'));
+try
+{
+	$controller = JController::getInstance('Mailto');
+	$controller->execute(JRequest::getCmd('task'));
+}
+catch (DatabaseException $e)
+{
+	JError::raiseError(500, $e->getMessage());
+}
+catch (Exception $e)
+{
+	JError::raiseError($e->getCode(), JText::_($e->getMessage()));
+}
