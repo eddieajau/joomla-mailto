@@ -20,20 +20,18 @@ jimport('joomla.application.component.controller');
 class MailtoController extends JController
 {
 	/**
-	 * Show the form so that the user can send the link to someone
+	 * Override the display method to set a timeout in the session.
 	 *
 	 * @return  void
 	 *
-	 * @since   1.5
+	 * @since   8.0
 	 */
-	public function mailto()
+	public function display()
 	{
 		$session = JFactory::getSession();
 		$session->set('com_mailto.formtime', time());
 
-		JRequest::setVar('view', 'mailto');
-
-		$this->display();
+		parent::display();
 	}
 
 	/**
