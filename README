@@ -1,0 +1,7 @@
+Extended features for the Joomla mailto component.
+
+This fork adds the following features:
+
+* Ability to assign email groups.
+* Log mails sent.
+* Allow subject and body of email to be taken from the content (only articles supported).
