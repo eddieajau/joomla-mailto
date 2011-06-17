@@ -22,7 +22,7 @@ JText::script('COM_MAILTO_EMAIL_ERR_NOINFO');
 
 		// Do field validation.
 		if (form.email_group_id) {
-			if ((form.email_group_id.value > 0 && form.mailto.value == '') || form.from.value == '') {
+			if ((form.email_group_id.value == '' && form.mailto.value == '') || form.from.value == '') {
 				alert(Joomla.JText._('COM_MAILTO_EMAIL_ERR_NOINFO'));
 				return false;
 			}
@@ -34,8 +34,6 @@ JText::script('COM_MAILTO_EMAIL_ERR_NOINFO');
 		form.submit();
 	}
 </script>
-<?php
-?>
 
 <div id="mailto-window">
 	<h2>
@@ -51,7 +49,7 @@ JText::script('COM_MAILTO_EMAIL_ERR_NOINFO');
 		<div class="formelm">
 			<label for="emailGroup_field"><?php echo JText::_('COM_MAILTO_EMAIL_GROUP'); ?></label>
 			<select name="email_group_id" id="emailGroup_field">
-				<option value="0"><?php echo JText::_('COM_MAILTO_SELECT_EMAIL_GROUP'); ?></option>
+				<option value=""><?php echo JText::_('COM_MAILTO_SELECT_EMAIL_GROUP'); ?></option>
 				<?php echo JHtml::_('select.options', $this->emailGroups); ?>
 			</select>
 		</div>
@@ -86,7 +84,7 @@ JText::script('COM_MAILTO_EMAIL_ERR_NOINFO');
 		</p>
 
 		<input type="hidden" name="layout" value="<?php echo $this->getLayout();?>" />
-		<input type="hidden" name="link" value="<?php echo $this->data->link; ?>" />
+		<input type="hidden" name="link" value="<?php echo urlencode($this->data->link); ?>" />
 		<?php echo JHtml::_('form.token'); ?>
 	</form>
 </div>
