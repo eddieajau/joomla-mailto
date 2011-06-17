@@ -116,10 +116,52 @@ class MailtoModelMailto extends JModel
 	 *
 	 * @since   8.0
 	 */
-	public function getContent()
+	public function getContent($link)
 	{
-		// TODO Allow for adapters to get other types of content.
+		$uri = JUri::getInstance($link);
 
+		// TODO Allow for adapters to get other types of content.
+		$option = $uri->getVar('option');
+		$view	= $uri->getVar('view');
+
+		if ($option != 'com_content' && $view != 'article') {
+			return null;
+		}
+
+		$id = intval($uri->getVar('id'));
+
+		if (empty($id)) {
+			return null;
+		}
+
+		// Get the content model.
+		JModel::addIncludePath(JPATH_SITE.'/components/com_content/models');
+
+		$model = JModel::getInstance('Article', 'ContentModel', array('ignore_request' => true));
+
+		// Fudge to get the model to work.
+		$model->setState('params', new JRegistry);
+
+		$article = $model->getItem($id);
+
+		if (empty($article)) {
+			return null;
+		}
+
+		// Check if the user has view rights.
+		// Allow for unpublished content so that the user can test unpublished content.
+		if (!$article->params->get('access-view') or $article->state < 0) {
+			return null;
+		}
+
+		$result = new stdClass();
+		$result->subject = $article->title;
+		$result->body = '<html><body>'.
+			$article->introtext.
+			'<p><a href="'.$link.'">'.$link.'</a>'.
+			'</body></html>';
+
+		return $result;
 	}
 
 	/**
@@ -176,6 +218,7 @@ class MailtoModelMailto extends JModel
 		$params	= JComponentHelper::getParams('com_mailto');
 
 		$link	= MailtoHelper::validateHash($this->getState('email.link'));
+		$content = $this->getContent($link);
 
 		$this->checkContentLink($link);
 
@@ -237,15 +280,26 @@ class MailtoModelMailto extends JModel
 		);
 
 		// Build the message to send.
-		$body	= JText::sprintf('COM_MAILTO_EMAIL_MSG', $config->get('sitename'), $fromName, $fromMail, $link);
 
-		// Assemble the email data...the sexy way!
-		$mail->setSubject(
-				JMailHelper::cleanSubject($subject)
-			)
-			->setBody(
-				JMailHelper::cleanBody($body)
-			);
+		if ($params->get('use_content') and $content) {
+			$mail->setSubject(
+					JMailHelper::cleanSubject($content->subject)
+				)
+				->setBody(
+					JMailHelper::cleanBody($content->body)
+				)
+				->IsHtml(true);
+		}
+		else {
+			$body = JText::sprintf('COM_MAILTO_EMAIL_MSG', $config->get('sitename'), $fromName, $fromMail, $link);
+
+			$mail->setSubject(
+					JMailHelper::cleanSubject($subject)
+				)
+				->setBody(
+					JMailHelper::cleanBody($body)
+				);
+		}
 
 		// Prepare the log message.
 		$this->setState(

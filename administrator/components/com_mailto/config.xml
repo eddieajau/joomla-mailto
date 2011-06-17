@@ -7,6 +7,16 @@
 		>
 
 		<field
+			name="use_content"
+			type="radio"
+			default="0"
+			label="COM_MAILTO_FIELD_USE_CONTENT_LABEL"
+			description="COM_MAILTO_FIELD_USE_CONTENT_DESC">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+
+		<field
 			name="group_send"
 			type="list"
 			label="COM_MAILTO_FIELD_GROUP_SEND_LABEL"
