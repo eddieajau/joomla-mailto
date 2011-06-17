@@ -58,7 +58,7 @@ class MailtoController extends JController
 		}
 
 		$this->getModel()->sendMail();
-die('HERE');
+
 		$this->setRedirect(
 			JRoute::_('index.php?option=com_mailto&view=sent'.($tmpl ? 'tmpl='.$tmpl : ''))
 		);
